@@ -13,7 +13,7 @@ FACTOR = 1.3
 
 logging.basicConfig(level=logging.INFO)
 
-with open('keyfile.txt', 'r') as f:
+with open('/home/shearna/repos/iot-enviropi/keyfile.txt', 'r') as f:
     api_key = f.read().strip()
 
 streamer = Streamer(bucket_name="Pi Zero", bucket_key="shearn89-pizero", access_key=api_key)
