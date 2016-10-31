@@ -2,7 +2,6 @@
 
 import time
 import sys
-import logging
 
 from subprocess import PIPE, Popen
 from envirophat import light, weather, leds
@@ -10,8 +9,6 @@ from envirophat import light, weather, leds
 from ISStreamer.Streamer import Streamer
 
 FACTOR = 1.3
-
-logging.basicConfig(level=logging.INFO)
 
 with open('/home/shearna/repos/iot-enviropi/keyfile.txt', 'r') as f:
     api_key = f.read().strip()
@@ -25,7 +22,7 @@ def get_environment():
         'light': round(light.light(),2)
     }
     data['cpu_temp'] = get_cpu_temperature()
-    data['est_temp'] = data['board_temp'] - ((data['cpu_temp'] - data['board_temp'])/FACTOR)
+    data['est_temp'] = round(data['board_temp'] - ((data['cpu_temp'] - data['board_temp'])/FACTOR),2)
 
     return data
 
@@ -36,13 +33,12 @@ def get_cpu_temperature():
     return round(float(output[output.index('=') + 1:output.rindex("'")]),2)
 
 def send_data(data):
-    logging.debug('sending data')
     for feed,value in data.iteritems():
-        logging.debug("%s,%.2f" % (feed,value))
         streamer.log(feed,value)
 
 if __name__ == '__main__':
-    logging.info("Starting temp logger...")
+    print ("Starting temp logger...")
+    streamer.log("messages", "pi zero stream starting")
     while True:
         data = get_environment()
         send_data(data)
